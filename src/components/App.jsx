@@ -94,7 +94,7 @@ export class App extends Component {
 
         {showModal && (
           <Modal onClose={this.toggleModal}>
-            <img src={this.state.largeImageURL}></img>
+            <img src={this.state.largeImageURL} alt=""></img>
           </Modal>
         )}
       </div>
