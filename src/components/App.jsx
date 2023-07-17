@@ -19,10 +19,11 @@ export class App extends Component {
 
   componentDidUpdate(_, prevState) {
     const { query, page } = this.state;
+
     if (prevState.query !== query || prevState.page !== page) {
+      this.setState({ isLoading: true });
       fetchImagies(query, page)
         .then(data => {
-          this.setState({ isLoading: true });
           if (data.hits.length === 0) {
             this.setState({ showBtn: false });
             alert(`There are no images by ${query}`);
@@ -43,17 +44,14 @@ export class App extends Component {
         });
     }
   }
-
-  onSubmit = e => {
-    e.preventDefault();
-
+  reset = () => {
     this.setState({ images: [] });
-    const inputValue = e.currentTarget.elements.searchQuery.value;
-    if (!inputValue.trim()) {
-      return alert('Please, fill this field ');
-    }
-    this.setState({ query: inputValue });
-    e.currentTarget.elements.searchQuery.value = '';
+    this.setState({ page: 1 });
+    this.setState({ showBtn: false });
+  };
+  onSubmit = query => {
+    this.setState({ query });
+    this.reset();
   };
 
   openModal = largeImageURL => {
@@ -68,14 +66,8 @@ export class App extends Component {
     this.setState(prevState => ({ showModal: !prevState.showModal }));
   };
 
-  onCloseModal = event => {
-    if (event.code === 'Escape') {
-      this.toggleModal();
-    }
-  };
-
   render() {
-    const { images, showBtn, isLoading, showModal } = this.state;
+    const { images, showBtn, isLoading, showModal, largeImageURL } = this.state;
     return (
       <div
         style={{
@@ -84,9 +76,9 @@ export class App extends Component {
           padding: '20',
         }}
       >
-        <SearchBar onSubmit={this.onSubmit} />
-
         {isLoading && <Loader />}
+
+        <SearchBar onSubmit={this.onSubmit} />
 
         <ImageGallery data={images} openModal={this.openModal} />
 
@@ -94,7 +86,7 @@ export class App extends Component {
 
         {showModal && (
           <Modal onClose={this.toggleModal}>
-            <img src={this.state.largeImageURL} alt=""></img>
+            <img src={largeImageURL} alt=""></img>
           </Modal>
         )}
       </div>
