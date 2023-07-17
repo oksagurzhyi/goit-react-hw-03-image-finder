@@ -30,12 +30,9 @@ export class App extends Component {
             return;
           }
 
-          if (page < Math.ceil(data.totalHits / 12)) {
-            this.setState({ showBtn: true });
-          }
-
           this.setState(prevState => ({
             images: [...prevState.images, ...data.hits],
+            showBtn: page < Math.ceil(data.totalHits / 12),
           }));
         })
         .catch(() => this.setState({ isLoading: false }))
@@ -44,14 +41,9 @@ export class App extends Component {
         });
     }
   }
-  reset = () => {
-    this.setState({ images: [] });
-    this.setState({ page: 1 });
-    this.setState({ showBtn: false });
-  };
+
   onSubmit = query => {
-    this.setState({ query });
-    this.reset();
+    this.setState({ query, images: [], page: 1, howBtn: false });
   };
 
   openModal = largeImageURL => {
